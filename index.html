@@ -894,7 +894,7 @@ html.js body { padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 
   <a class="cta" data-cta data-only="bundle regular" href="#form-url-missing" target="_blank" rel="noopener">신청하기<span class="sr-only">(새 창)</span></a>
 </div>
 
-<script>window.__ASOBI__={"rules": {"bundleEnd": 1798729200000, "deadlines": {"bizReport": null, "incomeTax": null}}, "preview": true, "version": "7fd23b98c91d"};
+<script>window.__ASOBI__={"rules": {"bundleEnd": 1798729200000, "deadlines": {"bizReport": null, "incomeTax": null}}, "preview": true, "version": "843d69bbe6bc"};
 /* 기간 판단(순수 함수). 빌드가 페이지에 인라인하고, 테스트(node --test)는 같은 파일을 require 한다.
    시각은 모두 epoch 밀리초로 받는다 — 기기 시간대와 무관하다. */
 (function (root) {
@@ -1053,7 +1053,7 @@ html.js body { padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 
   root.classList.add("js"); // 설정이 끝난 뒤에만 JS 전용 스타일을 켠다
 })();
 
-/* how.html figures. Hold the first frame until 40% of the figure is on screen for 0.4s, then play;
+/* how.html figures. Hold the first frame until the figure reaches the middle 20% band of the screen, wait 0.4s, then play;
    when the last step ends, show the finished frame for 3s and play again. Fully off screen or hidden tab: back to the first frame.
    Button: stop (= finished frame) / play again. Reduced motion or no IntersectionObserver: leave the finished frame alone. */
 (function () {
@@ -1071,9 +1071,13 @@ html.js body { padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 
       if (!seen || document.hidden) { if (play || t) reset(); }
       else if (!play) { if (!on) { clearTimeout(t); t = 0; } else if (!t) t = setTimeout(go, 400); }
     }
-    new IntersectionObserver(function (e) {
-      e = e[e.length - 1]; seen = e.isIntersecting; on = e.intersectionRatio >= 0.4; sync();
-    }, { threshold: [0, 0.4] }).observe(f);
+    function watch(o, set) { // isIntersecting only (no ratio math), so tall figures, landscape phones and resizes all work
+      var cb = function (e) { set(e[e.length - 1].isIntersecting); sync(); };
+      try { new IntersectionObserver(cb, o).observe(f); }
+      catch (_) { delete o.root; new IntersectionObserver(cb, o).observe(f); } // no document root: margins still apply at top level
+    }
+    watch({ threshold: 0 }, function (v) { seen = v; }); // implicit root: also off screen when a parent page scrolls this page away
+    watch({ root: document, rootMargin: "-40% 0px -40% 0px", threshold: 0 }, function (v) { on = v; }); // document root: the band works inside iframes too
     document.addEventListener("visibilitychange", sync);
     f.addEventListener("animationend", function (e) {
       if (play && e.target.hasAttribute("data-mf-last")) t = setTimeout(function () { reset(); go(); }, 3000);
