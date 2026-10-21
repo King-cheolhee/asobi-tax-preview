@@ -256,10 +256,13 @@ html.js body { padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 
   .cta, .cta:hover, .cta:active { transition: none; transform: none; }
 }
 
-/* 태블릿 이상: 하단 바 없이 가운데 한 열 그대로 */
+/* 태블릿 이상: 가운데 한 열 그대로, 하단 바는 본문 폭의 떠 있는 카드(2026-10-21 시안 B) */
 @media (min-width: 768px) {
-  .dock { display: none !important; }
-  html.js body { padding-bottom: 0; }
+  .dock {
+    left: 50%; right: auto; bottom: 16px; translate: -50% 0; width: min(600px, calc(100% - 32px));
+    border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 12px 12px 12px 20px;
+  }
+  html.js body { padding-bottom: calc(var(--dock-h) + 32px); }
   .poster { padding: 44px 0 48px; }
   .sec, .band { padding: 56px 0; }
 }
@@ -1072,7 +1075,7 @@ html.js body { padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 
   <a class="cta" data-cta data-only="bundle regular" href="https://docs.google.com/forms/d/e/1FAIpQLSexS8gmpJ2wvI07He8RQhvgHVmnlb2WaHZ5rdE6_W8fQnFMbw/viewform" target="_blank" rel="noopener">신청하기<span class="sr-only">(새 창)</span></a>
 </div>
 
-<script>window.__ASOBI__={"rules": {"bundleEnd": 1798729200000, "deadlines": {"bizReport": null, "incomeTax": null}}, "preview": true, "version": "fbf72bdecc6f"};
+<script>window.__ASOBI__={"rules": {"bundleEnd": 1798729200000, "deadlines": {"bizReport": null, "incomeTax": null}}, "preview": true, "version": "da75e0a04822"};
 /* 기간 판단(순수 함수). 빌드가 페이지에 인라인하고, 테스트(node --test)는 같은 파일을 require 한다.
    시각은 모두 epoch 밀리초로 받는다 — 기기 시간대와 무관하다. */
 (function (root) {
